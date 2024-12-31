@@ -1,0 +1,88 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+<!-- <script src="https://cdn.tailwindcss.com"></script> -->
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+
+<!-- display section -->
+<span id="displayIpAddress">192.168.0.0</span>
+<span id="displayPing">10ms</span>
+<button id="btnPing">Ping Server</button>
+<span id="displayTotalSelectedAccounts">10</span>
+<span id="displayTotalAccounts">60</span>
+<span id="displayProgramStatus">IDLE</span>
+<span id="displayTotalCoins">100</span>
+<br>
+
+<!-- program action controls -->
+<button id="btnHalt">Halt</button>
+<button id="btnContinue">Continue</button>
+<br>
+
+<!-- Basic action controls -->
+<button id="btnGetCoins">Get Coins</button>
+<button id="btnClaimCoins">Claim Coins</button>
+<br>
+
+<!-- Transferring coins controls -->
+<input type="text" id="inputTransferTargetID" placeholder="Recipient ID">
+<input type="text" id="inputAmount" placeholder="Amount">
+<button id="btnTransferCoins">Transfer Coins</button>
+<br>
+
+<!-- Checking other account controls -->
+<input type="text" id="inputCheckTargetID" placeholder="Account ID">
+<button id="btnCheckCoins">Check Coins</button>
+<br>
+
+<!-- accounts section -->
+<input type="text" id="inputSearch" placeholder="Search">
+<select id="selectSortBy">
+    <option value="coins">By Coins</option>
+    <option value="username" selected>By Name</option>
+    <option value="tag">By Tag</option>
+</select>
+<select id="selectOrder">
+    <option value="orderAscending" selected>Ascending</option>
+    <option value="orderDescending">Descending</option>
+</select>
+<div id="rowTemplate" class="accountContainer">
+    <div class="checkbox">
+        <input type="checkbox">
+    </div>
+    <div class="tag">ABCD</div>
+    <div class="username">HelloWorld</div>
+    <div class="api_key">242342</div>
+    <div class="discord_id">25345345345</div>
+    <div class="coins">445</div>
+    <div class="claim_time">--:--:--</div>
+    <div class="status">SLEEP</div>
+</div>
+<div id="rowHeader" class="accountContainer">
+    <div class="checkbox">
+        <input type="checkbox">
+    </div>
+    <div class="tag">Tag</div>
+    <div class="username">Username</div>
+    <div class="api_key">API Key</div>
+    <div class="discord_id">Discord ID</div>
+    <div class="coins">Coins</div>
+    <div class="claim_time">Next Claim</div>
+    <div class="status">Status</div>
+</div>
+<div id="accountsList"></div>
+
+<!-- logs section -->
+<div id="logTemplate" class="logContainer">
+    <div class="type"></div>
+    <div class="time"></div>
+    <div class="content"></div>
+</div>
+<button id="btnClearLog">Clear logs</button>
+<div id="logsList">
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+<script src="{{ url_for('static', filename='ws_handlers.js') }}" defer></script>

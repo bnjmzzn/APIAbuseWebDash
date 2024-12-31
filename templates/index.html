@@ -1,0 +1,146 @@
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<script src="https://cdn.socket.io/4.8.1/socket.io.min.js" integrity="sha384-mkQ3/7FUtcGyoppY6bz/PORYoGqOl7/aSUMn2ymDOJcapfS6PHqxhRTMh1RR0Q6+" crossorigin="anonymous"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+<!-- <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}"> -->
+
+<div class="h-full flex text-white font-mono bg-neutral-900">
+    <div id="sidebar">
+        <div id="sidebarHeader" class="flex p-4 gap-2 items-center select-none">
+            <iconify-icon icon="lucide:bot" class="text-6xl text-yellow-300"></iconify-icon>
+            <div class="font-bold text-2xl text-white">APIAWD.py</div>
+        </div>
+        <div id="sidebarNav" class="">
+            <button id="btnToggleInfo" class="w-full flex p-4 gap-2 items-center border-l-4 border-yellow-300">
+                <iconify-icon icon="material-symbols:bookmark-sharp" class="text-3xl text-yellow-300"></iconify-icon>
+                <div class="font-bold text-white">Information</div>
+            </button>
+            <button id="btnToggleControls" class="w-full flex p-4 gap-2 items-center border-l-4 border-yellow-300">
+                <iconify-icon icon="material-symbols:ad" class="text-3xl text-yellow-300"></iconify-icon>
+                <div class="font-bold text-white">Controls</div>
+            </button>
+            <button id="btnToggleAccounts" class="w-full flex p-4 gap-2 items-center border-l-4 border-yellow-300">
+                <iconify-icon icon="material-symbols:lists-rounded" class="text-3xl text-yellow-300"></iconify-icon>
+                <div class="font-bold text-white">Accounts</div>
+            </button>
+            <button id="btnToggleLogs" class="w-full flex p-4 gap-2 items-center border-l-4 border-yellow-300">
+                <iconify-icon icon="material-symbols:warning-rounded" class="text-3xl text-yellow-300"></iconify-icon>
+                <div class="font-bold text-white">Logs</div>
+            </button>
+        </div>
+    </div>
+    <div id="content" class="flex-1 flex flex-col overflow-y-scroll">
+        <div id="contentInfo" class="relative m-2 p-4 pt-6 flex gap-2 border-2 border-neutral-600 rounded">
+            <h1 class="absolute left-2 top-[-8px] px-1 bg-neutral-900 text-xl text-neutral-400">INFORMATION</h1>
+            <div class="flex-1">
+                <p>IP ADDRESS: <span id="displayIpAddress">192.168.0.0</span></p>
+                <p>WEBSOCKET: <span id="displayPing">10ms</span></p>
+                <button id="btnPing" class="mt-2 p-2 px-3 border-2 border-neutral-600 hover:border-yellow-500">Ping Server</button>
+            </div>
+            <div class="flex-1">
+                <p>ACCOUNTS: <span id="displayTotalSelectedAccounts">10</span>/<span id="displayTotalAccounts">60</span></p>
+                <p>TOTAL COINS: <span id="displayTotalCoins">100</span></p>
+                <p>STATE: <span id="displayProgramState" class="px-1 border-2 border-violet-500">IDLE</span></p>
+            </div>
+        </div>
+        <div id="contentControls" class="relative m-2 p-4 pt-6 flex flex-wrap gap-2 border-2 border-neutral-600">
+            <h1 class="absolute left-2 top-[-8px] px-1 bg-neutral-900 text-xl text-neutral-400">CONTROLS</h1>
+            <div class="flex-1 flex flex-col gap-2">
+                <button id="btnHalt" class="p-2 px-3 border-2 border-neutral-600 hover:border-red-500">Halt</button>
+                <button id="btnContinue" class="p-2 px-3 border-2 border-neutral-600 hover:border-blue-500">Continue</button>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">
+                <button id="btnGetCoins" class="p-2 px-3 border-2 border-neutral-600 hover:border-green-500">Get Coins</button>
+                <button id="btnClaimCoins" class="p-2 px-3 border-2 border-neutral-600 hover:border-green-500">Claim Coins</button>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">         
+                <input type="text" id="inputTransferTargetID" placeholder="Recipient ID" class="p-2 px-3 bg-transparent border-2 border-neutral-600 hover:border-green-500">
+                <input type="text" id="inputAmount" placeholder="Amount" class="p-2 px-3 bg-transparent border-2 border-neutral-600 hover:border-green-500">
+                <button id="btnTransferCoins" class="p-2 px-3 border-2 border-neutral-600 hover:border-green-500">Transfer Coins</button>
+            </div>
+            <div class="flex-1 flex flex-col gap-2">           
+                <input type="text" id="inputCheckTargetID" placeholder="Account ID" class="p-2 px-3 bg-transparent border-2 border-neutral-600 hover:border-green-500">
+                <button id="btnCheckCoins" class="p-2 px-3 border-2 border-neutral-600 hover:border-green-500">Check Coins</button>
+            </div>
+        </div>
+        <div id="contentAccounts" class="relative m-2 p-4 pt-6 flex flex-col gap-2 border-2 border-neutral-600">
+            <h1 class="absolute left-2 top-[-8px] px-1 bg-neutral-900 text-xl text-neutral-400">ACCOUNTS</h1>
+            <div class="flex gap-2">
+                <input type="text" id="inputSearch" placeholder="Search" class="p-2 px-3 bg-transparent border-2 border-neutral-600 hover:border-white">
+                <select id="selectSortBy" class="p-2 px-3 bg-neutral-900 border-2 border-neutral-600 hover:border-white">
+                    <option value="coins">By Coins</option>
+                    <option value="username" selected>By Name</option>
+                    <option value="tag">By Tag</option>
+                </select>
+                <select id="selectOrder" class="p-2 px-3 bg-neutral-900  border-2 border-neutral-600 hover:border-white">
+                    <option value="orderAscending" selected>Ascending</option>
+                    <option value="orderDescending">Descending</option>
+                </select>
+            </div>
+            <div class="p-2">
+                <div id="rowHeader" class="accountContainer mx-2 p-2 gap-4 flex border-b-2 border-neutral-600">
+                    <div class="checkbox flex justify-center items-center">
+                        <input type="checkbox" class="size-5 bg-neutral-900">
+                    </div>    
+                    <div class="flex-1 justify-center items-center">
+                        <div class="flex-1 flex gap-2">
+                            [<div class="tag">TAG</div>]
+                            <div class="username font-bold">USERNAME</div>
+                        </div>
+                    </div>
+                    <div class="mr-6 flex-1 flex justify-between justify-center items-center">
+                        <div class="coins">COINS</div>
+                        <div class="claim_time">NEXT CLAIM</div>
+                        <div class="state">STATE</div>
+                    </div>
+                </div>
+                <div id="accountsList" class="h-[500px] overflow-y-scroll"></div>
+            </div>
+        </div>
+        <div id="contentLogs" class="relative m-2 p-4 pt-6 flex flex-col gap-2 border-2 border-neutral-600">
+            <h1 class="absolute left-2 top-[-8px] px-1 bg-neutral-900 text-xl text-neutral-400">LOGS</h1>
+            <div id="logsList" class="h-[500px] overflow-y-scroll">
+            </div>
+            <button id="btnClearLog" class="p-2 px-3 border-2 border-neutral-600 hover:border-red-500">Clear logs</button>
+        </div>
+    </div>
+</div>
+
+<div id="rowTemplate" class="accountContainer m-2 p-2 flex gap-4 hidden border-b-2 border-neutral-600 hover:border-white hover:border-2">
+    <div class="checkbox flex justify-center items-center">
+        <input type="checkbox" class="size-5 bg-neutral-900">
+    </div>    
+    <div class="flex-1 justify-center items-center overflow-x-hide">
+        <div class="flex-1 flex gap-2">
+            [<div class="tag">****</div>]
+            <div class="username font-bold">*************</div>
+        </div>
+        <div class="displaySecrets hidden flex-1">
+            <div class="api_key">*************</div>
+            <div class="discord_id">*************</div>
+        </div>
+    </div>
+    <div class="mr-2 flex-1 flex justify-between justify-center items-center">
+        <div>
+            <div class="coins">0</div>
+        </div>
+        <div>
+            <div class="claim_time">--:--:--</div>
+        </div>
+        <div>
+            <div class="state px-2">----</div>
+        </div>
+    </div>
+</div>
+
+<div id="logTemplate" class="logContainer hidden mb-2 border-b-2 border-neutral-600">
+    <div class="flex gap-4">
+        <div class="type px-2"></div>
+        <div class="time"></div>
+    </div>
+    <pre class="content p-2"></pre>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.7.1/dist/jquery.min.js"></script>
+<script src="https://code.iconify.design/iconify-icon/2.2.0/iconify-icon.min.js"></script>
+<script src="{{ url_for('static', filename='script.js') }}" defer></script>
+<script src="{{ url_for('static', filename='ws_handlers.js') }}" defer></script>
