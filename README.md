@@ -43,7 +43,7 @@ https://github.com/user-attachments/assets/48c98b68-5e82-468f-b207-88dbd030a44d
 3. Run the program:
 
     ```sh
-    python app.y
+    python app.py
     ```
 
 ### Notes
